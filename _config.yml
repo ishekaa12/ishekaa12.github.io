@@ -1,7 +1,7 @@
 title: Isheka's Blog
 description: Thoughts on college, code and life.
 
-theme: jekyll-theme-primer
+theme: minima
 
 permalink: /blog/:title/
 
