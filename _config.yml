@@ -1,6 +1,9 @@
-title: Isheka Singh
-description: My personal blog
+title: Isheka's Blog
+description: Thoughts on college, code and life.
+
 theme: jekyll-theme-primer
+
+permalink: /blog/:title/
 
 plugins:
   - jekyll-feed
