@@ -1,0 +1,6 @@
+title: Isheka Singh
+description: My personal blog
+theme: jekyll-theme-primer
+
+plugins:
+  - jekyll-feed
