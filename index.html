@@ -7,18 +7,30 @@ title: Home
 
 <p>Thoughts on college, code and life.</p>
 
-<hr>
+{% assign posts = site.posts %}
 
-{% for post in site.posts %}
-  <article>
-    <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+{% if posts.size > 0 %}
 
-    <small>{{ post.date | date: "%B %d, %Y" }}</small>
+  {% for post in posts %}
+    <article>
+      <h2>
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h2>
 
-    <p>{{ post.excerpt }}</p>
+      <small>{{ post.date | date: "%B %d, %Y" }}</small>
 
-    <p><a href="{{ post.url }}">Read more →</a></p>
+      <p>{{ post.excerpt }}</p>
+
+      <p>
+        <a href="{{ post.url | relative_url }}">Read more →</a>
+      </p>
+    </article>
 
     <hr>
-  </article>
-{% endfor %}
+  {% endfor %}
+
+{% else %}
+
+<p>No posts found.</p>
+
+{% endif %}
