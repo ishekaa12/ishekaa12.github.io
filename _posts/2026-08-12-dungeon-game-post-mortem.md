@@ -7,7 +7,7 @@ categories: [tech, c, dsa]
 
 Remember how I said I still don't know what a pointer is? Lied a little. I built an entire dungeon game to find out.
 
-It's called **Dungeon of the Lost King** — a text-adventure where you walk through rooms, pick things up, and hunt down an Ancient Amulet. The game itself is not the point. The point is that to make it work, I had to actually use pointers, structs, linked lists, and 2D arrays instead of just reading about them.
+It's called **Dungeon of the Lost King** a text-adventure where you walk through rooms, pick things up, and hunt down an Ancient Amulet. The game itself is not the point. The point is that to make it work, I had to actually use pointers, structs, linked lists, and 2D arrays instead of just reading about them.
 
 ## The Map: Rooms That Point to Other Rooms
 
@@ -30,7 +30,7 @@ typedef struct Room {
 } Room;
 ```
 
-That `struct Room *north` sitting inside `Room` is the self-referential part — a room holding a pointer to another room of the same type. Before this, "self-referential struct" was just a phrase in a slide. Here it's just... how you tell a room where the exits go.
+That `struct Room *north` sitting inside `Room` is the self-referential part  a room holding a pointer to another room of the same type. Before this, "self-referential struct" was just a phrase in a slide. Here it's just... how you tell a room where the exits go.
 
 Connecting them ended up being three lines:
 
@@ -41,7 +41,7 @@ corridor->north = chamber;
 chamber->south  = corridor;
 ```
 
-Right now my dungeon is basically a straight line — Entrance → Corridor → Chamber, north/south only. I never used east/west, they're just sitting there unused in every room. That's the honest version: I built four directions and only needed one axis. Next version, I want an actual branching layout, which is the whole reason I left east/west in the struct instead of ripping them out.
+Right now my dungeon is basically a straight line : Entrance → Corridor → Chamber, north/south only. I never used east/west, they're just sitting there unused in every room. That's the honest version: I built four directions and only needed one axis. Next version, I want an actual branching layout, which is the whole reason I left east/west in the struct instead of ripping them out.
 
 There's also an `all_rooms[MAP_ROWS][MAP_COLS]` grid sitting alongside the pointer connections — a 2D array of `Room *`, indexed by `map_row` and `map_col`, that only exists to draw the ASCII map (`[YOU]`, `[X]` for visited, `[?]` for unknown). So there are technically two systems tracking the dungeon layout at once: the pointers for actual navigation, and the grid for drawing it. That felt redundant while I was writing it, but it's also the cleanest way I found to separate "how the player moves" from "how the map gets displayed."
 
@@ -49,7 +49,7 @@ There's also an `all_rooms[MAP_ROWS][MAP_COLS]` grid sitting alongside the point
 
 This is the decision I actually had to think about, because an array would've been simpler to type out.
 
-The problem: I didn't know how many items a room would hold, or how many the player would end up carrying. A linked list doesn't care — you just allocate a new node and point the old head at it:
+The problem: I didn't know how many items a room would hold, or how many the player would end up carrying. A linked list doesn't care you just allocate a new node and point the old head at it:
 
 ```c
 void add_item(Item **head, char *name, int weight) {
@@ -61,7 +61,7 @@ void add_item(Item **head, char *name, int weight) {
 }
 ```
 
-The part I'm actually proud of is `move_item`. My first instinct for "take an item" was: remove it from the room's list and free it, then malloc a fresh node for the inventory list. Which works, but it's wasteful — you're destroying a perfectly good node just to rebuild an identical one two lines later.
+The part I'm actually proud of is `move_item`. My first instinct for "take an item" was: remove it from the room's list and free it, then malloc a fresh node for the inventory list. Which works, but it's wasteful you're destroying a perfectly good node just to rebuild an identical one two lines later.
 
 What I did instead:
 
@@ -101,11 +101,11 @@ if (has_item(player.inventory, "Amulet")) {
 }
 ```
 
-No separate "check for win" system, no flags scattered around. If the Amulet is in your inventory linked list, you've won — because you can only get it there by walking the whole dungeon and typing `take Amulet`. The data structure was already doing the game logic for me.
+No separate "check for win" system, no flags scattered around. If the Amulet is in your inventory linked list, you've won because you can only get it there by walking the whole dungeon and typing `take Amulet`. The data structure was already doing the game logic for me.
 
 ## Cleaning Up After Myself
 
-The unglamorous but important part — freeing everything before the program exits:
+The unglamorous but important part : freeing everything before the program exits:
 
 ```c
 free_items(player.inventory);
@@ -117,7 +117,7 @@ free(corridor);
 free(chamber);
 ```
 
-Every `malloc` in this game — for rooms and for items — gets a matching `free`. I didn't get that right on the first try. Early on I was freeing item nodes inside `drop_item` while also trying to reuse them elsewhere in a different version of the same function, which is exactly the kind of use-after-free bug that C will let you write without complaint and then punish you for silently later. Splitting the logic into "move between lists" (no free) versus "actually done with this item" (free) is what fixed it.
+Every `malloc` in this game for rooms and for items gets a matching `free`. I didn't get that right on the first try. Early on I was freeing item nodes inside `drop_item` while also trying to reuse them elsewhere in a different version of the same function, which is exactly the kind of use-after-free bug that C will let you write without complaint and then punish you for silently later. Splitting the logic into "move between lists" (no free) versus "actually done with this item" (free) is what fixed it.
 
 ## What I'd Do Differently Now
 
